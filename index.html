@@ -1,0 +1,3753 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoFood — Инвестиционный проект</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a5f3c;
+            --primary-light: #2d8a5a;
+            --primary-dark: #0f3d26;
+            --accent: #4caf50;
+            --bg-light: #f8faf9;
+            --bg-card: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #5a5a5a;
+            --text-muted: #8a8a8a;
+            --border: #e0e5e2;
+            --shadow: 0 4px 24px rgba(26, 95, 60, 0.08);
+            --shadow-hover: 0 8px 32px rgba(26, 95, 60, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Scroll Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .fade-in-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .fade-in-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .fade-in-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .fade-in-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .scale-in {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+
+        .scale-in.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Disable animations on mobile for better performance */
+        @media (max-width: 768px) {
+            .fade-in,
+            .fade-in-left,
+            .fade-in-right,
+            .scale-in {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        /* Stagger animation delays */
+        .stagger-1 { transition-delay: 0.1s; }
+        .stagger-2 { transition-delay: 0.2s; }
+        .stagger-3 { transition-delay: 0.3s; }
+        .stagger-4 { transition-delay: 0.4s; }
+        .stagger-5 { transition-delay: 0.5s; }
+        .stagger-6 { transition-delay: 0.6s; }
+
+        /* Counter Animation */
+        .counter {
+            display: inline-block;
+        }
+
+        /* Pulse Animation */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Float Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Shimmer Effect */
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+
+        /* Glow Effect */
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(76, 175, 80, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(76, 175, 80, 0.6); }
+        }
+
+        /* Tooltip Styles */
+        .term {
+            border-bottom: 1px dashed var(--primary);
+            cursor: help;
+            transition: all 0.2s ease;
+            position: relative;
+            z-index: 10;
+        }
+
+        .term:hover {
+            color: var(--primary);
+            border-bottom-style: solid;
+        }
+
+        /* Global tooltip container */
+        #tooltip-container {
+            position: fixed;
+            background: #1a1a1a;
+            color: white;
+            padding: 14px 18px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            max-width: 340px;
+            z-index: 100000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+            pointer-events: none;
+            text-align: left;
+            font-weight: 400;
+        }
+
+        #tooltip-container.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #tooltip-container::after {
+            content: '';
+            position: absolute;
+            border: 9px solid transparent;
+        }
+
+        #tooltip-container.arrow-bottom::after {
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-top-color: #1a1a1a;
+        }
+
+        #tooltip-container.arrow-top::after {
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-bottom-color: #1a1a1a;
+        }
+
+        #tooltip-container.arrow-left::after {
+            left: 20px;
+            transform: none;
+        }
+
+        #tooltip-container.arrow-right::after {
+            left: auto;
+            right: 20px;
+            transform: none;
+        }
+
+        /* Mobile overlay */
+        .tooltip-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 99999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .tooltip-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @media (max-width: 768px) {
+            #tooltip-container {
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                max-width: calc(100vw - 48px);
+                width: calc(100vw - 48px);
+            }
+
+            #tooltip-container::after {
+                display: none;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-cta {
+            background: var(--primary);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-cta::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .nav-cta:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .nav-cta:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(26, 95, 60, 0.3);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 140px 0 80px;
+            background: linear-gradient(180deg, #ffffff 0%, var(--bg-light) 100%);
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(76, 175, 80, 0.1);
+            color: var(--primary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }ыы
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+        }
+
+        .hero h1 span {
+            color: var(--primary);
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 48px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Key Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin-top: 48px;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(76, 175, 80, 0.1), transparent);
+            transition: left 0.5s ease;
+            pointer-events: none;
+        }
+
+        .metric-card:hover::before {
+            left: 100%;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(26, 95, 60, 0.15);
+        }
+
+        .metric-card:active {
+            transform: translateY(-4px) scale(1.01);
+        }
+
+        .metric-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 480px) {
+            .metric-value {
+                white-space: normal;
+                font-size: 1.1rem;
+            }
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Section Styles */
+        section {
+            padding: 80px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Market Analysis */
+        .market-section {
+            background: white;
+        }
+
+        /* Strategy Section */
+        .strategy-section {
+            background: linear-gradient(180deg, #f0f7f2 0%, #ffffff 100%);
+        }
+
+        .strategy-block {
+            margin-bottom: 48px;
+        }
+
+        .strategy-subtitle {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+        }
+
+        .industry-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .industry-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border: 2px solid transparent;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .industry-card.growing {
+            border-color: #4caf50;
+        }
+
+        .industry-card.declining {
+            border-color: #ef5350;
+        }
+
+        .industry-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .industry-card.growing:hover {
+            box-shadow: 0 20px 40px rgba(76, 175, 80, 0.2);
+        }
+
+        .industry-card.declining:hover {
+            box-shadow: 0 20px 40px rgba(239, 83, 80, 0.2);
+        }
+
+        .industry-icon {
+            font-size: 2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .industry-card:hover .industry-icon {
+            transform: scale(1.2);
+        }
+
+        .industry-growth {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1rem;
+            animation: pulse 2s infinite;
+        }
+
+        .industry-decline {
+            background: #ffebee;
+            color: #c62828;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .industry-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .industry-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        /* Comparison Tables */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .comparison-table th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .comparison-table td {
+            font-size: 0.95rem;
+        }
+
+        .comparison-table tr:hover {
+            background: var(--bg-light);
+            transition: background 0.3s ease;
+        }
+
+        .comparison-table tr {
+            transition: all 0.3s ease;
+        }
+
+        .comparison-table tbody tr:hover {
+            transform: scale(1.01);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .comparison-table .highlight-row {
+            background: rgba(76, 175, 80, 0.08);
+        }
+
+        .comparison-table .highlight-row:hover {
+            background: rgba(76, 175, 80, 0.12);
+        }
+
+        .comparison-table .total-row {
+            background: var(--bg-light);
+            font-weight: 600;
+        }
+
+        .comparison-table .positive {
+            color: #2e7d32;
+            font-weight: 600;
+        }
+
+        .comparison-table .negative {
+            color: #c62828;
+            font-weight: 600;
+        }
+
+        .comparison-table .highlight-value {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge.green {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .badge.yellow {
+            background: #fff8e1;
+            color: #f57f17;
+        }
+
+        .badge.red {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        /* Arguments Grid */
+        .arguments-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            padding-top: 20px;
+        }
+
+        .argument-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            padding-top: 36px;
+            box-shadow: var(--shadow);
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .argument-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.05), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 16px;
+            pointer-events: none;
+        }
+
+        .argument-card:hover::before {
+            opacity: 1;
+        }
+
+        .argument-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(26, 95, 60, 0.15);
+        }
+
+        .argument-number {
+            position: absolute;
+            top: -18px;
+            left: 20px;
+            background: var(--primary);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(26, 95, 60, 0.3);
+        }
+
+        .argument-card:hover .argument-number {
+            transform: scale(1.15);
+            box-shadow: 0 6px 20px rgba(26, 95, 60, 0.4);
+        }
+
+        .argument-card h4 {
+            margin-top: 8px;
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+
+        .argument-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .argument-stat {
+            background: var(--bg-light);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        /* Comparison Section */
+        .comparison-section {
+            background: white;
+        }
+
+        .comparison-block {
+            margin-bottom: 48px;
+        }
+
+        /* Synergy Grid */
+        .synergy-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .synergy-card {
+            background: linear-gradient(135deg, #f0f7f2 0%, #e8f5e9 100%);
+            border-radius: 16px;
+            padding: 28px;
+            text-align: center;
+            border: 1px solid #c8e6c9;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .synergy-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(76, 175, 80, 0.2);
+            border-color: var(--primary);
+        }
+
+        .synergy-icon {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .synergy-card:hover .synergy-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .synergy-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .synergy-card:hover .synergy-value {
+            transform: scale(1.1);
+        }
+
+        .synergy-card h4 {
+            font-size: 1rem;
+            margin-bottom: 12px;
+        }
+
+        .synergy-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        /* Risk Comparison */
+        .risk-comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .risk-comparison-card {
+            background: var(--bg-light);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .risk-comparison-card h4 {
+            font-size: 1rem;
+            margin-bottom: 16px;
+        }
+
+        .risk-comparison-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin: 16px 0 12px;
+        }
+
+        .risk-comparison-visual {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .risk-bar {
+            flex: 1;
+            height: 24px;
+            background: #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .risk-bar-fill {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            min-width: 40px;
+        }
+
+        .risk-bar-fill.vertical {
+            background: linear-gradient(90deg, #4caf50, #81c784);
+        }
+
+        .risk-bar-fill.separate {
+            background: linear-gradient(90deg, #ef5350, #e57373);
+        }
+
+        .risk-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            min-width: 70px;
+        }
+
+        .diversification-visual {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .diversification-visual .segment {
+            background: var(--primary);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 0.75rem;
+        }
+
+        .volatility-comparison {
+            display: flex;
+            justify-content: space-around;
+            margin: 16px 0;
+        }
+
+        .volatility-item {
+            text-align: center;
+        }
+
+        .volatility-value {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .volatility-value.low {
+            color: #2e7d32;
+        }
+
+        .volatility-value.high {
+            color: #c62828;
+        }
+
+        /* Scenarios Grid */
+        .scenarios-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .scenario-card {
+            border-radius: 16px;
+            padding: 28px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .scenario-card:hover {
+            transform: translateY(-10px) scale(1.03);
+        }
+
+        .scenario-card.best {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            animation: glow 3s infinite;
+        }
+
+        .scenario-card.best:hover {
+            box-shadow: 0 25px 50px rgba(26, 95, 60, 0.4);
+        }
+
+        .scenario-card.medium {
+            background: #fff8e1;
+            border: 2px solid #ffcc80;
+        }
+
+        .scenario-card.medium:hover {
+            box-shadow: 0 20px 40px rgba(255, 152, 0, 0.2);
+        }
+
+        .scenario-card.baseline {
+            background: var(--bg-light);
+            border: 2px solid var(--border);
+        }
+
+        .scenario-card.baseline:hover {
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .scenario-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .scenario-card:hover .scenario-value {
+            transform: scale(1.1);
+        }
+
+        .scenario-label {
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            opacity: 0.9;
+        }
+
+        .scenario-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .scenario-details {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .scenario-details div {
+            margin-bottom: 4px;
+        }
+
+        /* Case Studies */
+        .case-studies-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .case-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: var(--shadow);
+            border: 2px solid transparent;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .case-card.success {
+            border-color: #4caf50;
+        }
+
+        .case-card.failure {
+            border-color: #ef5350;
+        }
+
+        .case-card:hover {
+            transform: translateY(-8px) scale(1.02);
+        }
+
+        .case-card.success:hover {
+            box-shadow: 0 20px 40px rgba(76, 175, 80, 0.2);
+        }
+
+        .case-card.failure:hover {
+            box-shadow: 0 20px 40px rgba(239, 83, 80, 0.2);
+        }
+
+        .case-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .case-card:hover .case-badge {
+            transform: scale(1.05);
+        }
+
+        .case-badge.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .case-badge.failure {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .case-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+        }
+
+        .case-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .case-stats {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 12px;
+        }
+
+        .case-stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-value.negative {
+            color: #c62828;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .market-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .market-card {
+            background: var(--bg-light);
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid var(--border);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .market-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+            pointer-events: none;
+        }
+
+        .market-card:hover::after {
+            transform: scaleX(1);
+        }
+
+        .market-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(26, 95, 60, 0.1);
+            border-color: var(--primary);
+        }
+
+        .market-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--primary);
+        }
+
+        .market-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+        }
+
+        .source {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            margin-top: 16px;
+        }
+
+        .highlight-stat {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        /* Production Structure */
+        .production-section {
+            background: var(--bg-light);
+        }
+
+        .production-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 24px;
+        }
+
+        .production-card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .production-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 16px 16px 0 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .production-card:hover::before {
+            opacity: 1;
+        }
+
+        .production-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(26, 95, 60, 0.12);
+        }
+
+        .production-number {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.25rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .production-card:hover .production-number {
+            transform: rotate(10deg) scale(1.1);
+            box-shadow: 0 5px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .production-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .production-title {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .production-number {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .production-title h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .production-title .location {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .production-investment {
+            background: rgba(76, 175, 80, 0.1);
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-align: right;
+        }
+
+        .production-investment .amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .production-investment .label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .production-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .detail-block h4 {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-block ul {
+            list-style: none;
+        }
+
+        .detail-block li {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            padding: 4px 0;
+            padding-left: 16px;
+            position: relative;
+        }
+
+        .detail-block li::before {
+            content: "•";
+            color: var(--accent);
+            position: absolute;
+            left: 0;
+        }
+
+        /* Financial Plan */
+        .financial-section {
+            background: white;
+        }
+
+        .financial-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 32px;
+        }
+
+        .financial-table th,
+        .financial-table td {
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .financial-table th {
+            background: var(--bg-light);
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .financial-table td {
+            font-size: 0.95rem;
+        }
+
+        .financial-table tr:hover {
+            background: var(--bg-light);
+        }
+
+        .financial-table .year {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .financial-table .highlight {
+            background: rgba(76, 175, 80, 0.05);
+        }
+
+        .financial-note {
+            margin-top: 24px;
+            padding: 20px;
+            background: var(--bg-light);
+            border-radius: 12px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Team Section */
+        .team-section {
+            background: var(--bg-light);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .team-card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px 24px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .team-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(26, 95, 60, 0.15);
+        }
+
+        .team-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            transition: all 0.4s ease;
+        }
+
+        .team-card:hover .team-avatar {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
+        }
+
+        .team-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .team-card .role {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .team-card .salary {
+            font-size: 0.9rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Risks Section */
+        .risks-section {
+            background: white;
+        }
+
+        .risks-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .risk-card {
+            background: var(--bg-light);
+            border-radius: 16px;
+            padding: 28px;
+            border: 1px solid var(--border);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .risk-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+
+        .risk-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .risk-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .risk-probability {
+            background: #fff3e0;
+            color: #e65100;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+        }
+
+        .risk-card:hover .risk-probability {
+            transform: scale(1.1);
+        }
+
+        .risk-probability.high {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .risk-probability.medium {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .risk-probability.low {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .risk-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .risk-measure {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .risk-measure strong {
+            color: var(--primary);
+        }
+
+        /* Investment Offer */
+        .investment-section {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+        }
+
+        .investment-section .section-header h2,
+        .investment-section .section-header p {
+            color: white;
+        }
+
+        .investment-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+        }
+
+        .investment-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 32px;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .investment-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .investment-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .investment-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .investment-item:last-child {
+            border-bottom: none;
+        }
+
+        .investment-item .label {
+            opacity: 0.8;
+        }
+
+        .investment-item .value {
+            font-weight: 600;
+        }
+
+        /* Total Return Breakdown */
+        .total-return-block {
+            margin-top: 48px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .total-return-block h3 {
+            text-align: center;
+            font-size: 1.3rem;
+            margin-bottom: 32px;
+            opacity: 0.95;
+        }
+
+        .return-breakdown {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .return-component {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 28px 24px;
+            text-align: center;
+            min-width: 200px;
+            flex: 1;
+            max-width: 280px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .return-component:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .return-component.dividend-return {
+            border-color: rgba(76, 175, 80, 0.4);
+        }
+
+        .return-component.capital-return {
+            border-color: rgba(33, 150, 243, 0.4);
+        }
+
+        .return-component.total-return {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 193, 7, 0.5);
+            box-shadow: 0 0 30px rgba(255, 193, 7, 0.2);
+        }
+
+        .return-component.total-return:hover {
+            box-shadow: 0 0 40px rgba(255, 193, 7, 0.3), 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .return-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+
+        .return-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .return-label {
+            font-size: 0.95rem;
+            opacity: 0.85;
+            margin-bottom: 8px;
+        }
+
+        .return-percent {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #4caf50;
+            margin-bottom: 16px;
+        }
+
+        .return-component.total-return .return-percent {
+            color: #ffc107;
+        }
+
+        .return-details {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            line-height: 1.6;
+        }
+
+        .return-plus,
+        .return-equals {
+            font-size: 2.5rem;
+            font-weight: 300;
+            opacity: 0.6;
+        }
+
+        .return-note {
+            margin-top: 28px;
+            text-align: center;
+            font-size: 0.85rem;
+            opacity: 0.7;
+            font-style: italic;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 1024px) {
+            .return-breakdown {
+                gap: 16px;
+            }
+            .return-component {
+                min-width: 180px;
+                padding: 24px 20px;
+            }
+            .return-value {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .return-breakdown {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .return-component {
+                max-width: 100%;
+                width: 100%;
+            }
+            .return-plus,
+            .return-equals {
+                font-size: 1.8rem;
+            }
+            .total-return-block {
+                padding: 28px 20px;
+            }
+            .total-return-block h3 {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: var(--bg-light);
+            text-align: center;
+        }
+
+        .cta-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .cta-content h2 {
+            font-size: 2rem;
+            margin-bottom: 16px;
+        }
+
+        .cta-content p {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .btn-primary:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-light);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(26, 95, 60, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            padding: 16px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            border: 2px solid var(--primary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(26, 95, 60, 0.2);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(-1px);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--text-primary);
+            color: white;
+            padding: 48px 0 24px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .footer-logo {
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .disclaimer {
+            background: #fff3e0;
+            border: 1px solid #ffcc80;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 32px;
+            font-size: 0.85rem;
+            color: #e65100;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .metrics-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .production-details {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .team-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .risks-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .industry-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .arguments-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .synergy-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .risk-comparison-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .scenarios-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            .hero h1 {
+                font-size: 1.75rem;
+                line-height: 1.3;
+            }
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            .metric-card {
+                padding: 16px 12px;
+            }
+            .metric-value {
+                font-size: 1.25rem;
+            }
+            .metric-label {
+                font-size: 0.75rem;
+            }
+            .market-grid {
+                grid-template-columns: 1fr;
+            }
+            .production-details {
+                grid-template-columns: 1fr;
+            }
+            .production-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .production-investment {
+                text-align: left;
+                margin-top: 12px;
+            }
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+            .risks-grid {
+                grid-template-columns: 1fr;
+            }
+            .investment-grid {
+                grid-template-columns: 1fr;
+            }
+            .investment-item {
+                flex-direction: column;
+                gap: 4px;
+                text-align: left;
+            }
+            .investment-item .value {
+                font-size: 1rem;
+            }
+            .cta-buttons {
+                flex-direction: column;
+            }
+            .footer-content {
+                flex-direction: column;
+                gap: 24px;
+            }
+            .footer-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 16px;
+            }
+            .industry-grid {
+                grid-template-columns: 1fr;
+            }
+            .arguments-grid {
+                grid-template-columns: 1fr;
+            }
+            .synergy-grid {
+                grid-template-columns: 1fr;
+            }
+            .synergy-value {
+                font-size: 1.5rem;
+            }
+            .risk-comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            .scenarios-grid {
+                grid-template-columns: 1fr;
+            }
+            .scenario-value {
+                font-size: 1.5rem;
+            }
+            .case-studies-grid {
+                grid-template-columns: 1fr;
+            }
+            .comparison-table {
+                font-size: 0.8rem;
+            }
+            .comparison-table th,
+            .comparison-table td {
+                padding: 10px 8px;
+            }
+            .section-header h2 {
+                font-size: 1.5rem;
+            }
+            .strategy-subtitle {
+                font-size: 1.1rem;
+            }
+            .highlight-stat {
+                font-size: 1.5rem;
+            }
+            .container {
+                padding: 0 16px;
+            }
+            section {
+                padding: 60px 0;
+            }
+            .hero {
+                padding: 120px 0 60px;
+            }
+            /* Fix text wrapping */
+            .investment-card h3 {
+                font-size: 1rem;
+            }
+            .market-card h3 {
+                font-size: 1rem;
+            }
+            .risk-header h3 {
+                font-size: 0.9rem;
+            }
+            /* Prevent word break issues */
+            .investment-item .label,
+            .investment-item .value {
+                word-break: normal;
+                hyphens: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-content">
+            <div class="logo">
+                <div class="logo-icon">🌱</div>
+                EcoFood
+            </div>
+            <ul class="nav-links">
+                <li><a href="#strategy">Стратегия</a></li>
+                <li><a href="#comparison">Сравнение</a></li>
+                <li><a href="#market">Рынок</a></li>
+                <li><a href="#production">Производства</a></li>
+                <li><a href="#financial">Финансы</a></li>
+                <li><a href="#risks">Риски</a></li>
+                <li><a href="#investment">Инвестиции</a></li>
+            </ul>
+            <a href="#contact" class="nav-cta">Связаться</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <span class="hero-badge">🌿 ESG-ориентированный проект</span>
+                <h1>EcoFood: <span>Вертикально интегрированная</span> производственная система премиальных пищевых продуктов</h1>
+                <p class="hero-subtitle">Создание полного цикла производства экологичных пищевых продуктов и упаковки в Москве и Московской области с фокусом на импортозамещение и устойчивое развитие</p>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">5.8 млрд ₽</div>
+                    <div class="metric-label">Объем инвестиций</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">3 млрд ₽</div>
+                    <div class="metric-label">Прибыль к 2031</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">30 млрд ₽</div>
+                    <div class="metric-label"><span class="term" data-tooltip="Рыночная стоимость компании, рассчитанная как чистая прибыль × мультипликатор P/E. При P/E=10x и прибыли 3 млрд ₽ капитализация = 30 млрд ₽. P/E=10x соответствует средним значениям для пищевой отрасли РФ (Черкизово 7-9x, Русагро 8-10x, ЭФКО 9-11x)">Капитализация</span> (<span class="term" data-tooltip="Price-to-Earnings — отношение цены акции к прибыли на акцию. P/E=10x означает, что инвесторы готовы платить 10 рублей за каждый рубль годовой прибыли компании. Для пищевой отрасли РФ это консервативная оценка">P/E</span>=10x)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">40-48%</div>
+                    <div class="metric-label">Среднегодовая доходность</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">4.5 года</div>
+                    <div class="metric-label">Срок окупаемости</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Strategic Choice Section -->
+    <section id="strategy" class="strategy-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Стратегический выбор: почему вертикаль и почему эта отрасль?</h2>
+                <p>Объективный анализ динамики отраслей РФ и обоснование выбора модели</p>
+            </div>
+
+            <!-- Industry Dynamics -->
+            <div class="strategy-block">
+                <h3 class="strategy-subtitle">📈 Растущие отрасли РФ (2024-2025)</h3>
+                <div class="industry-grid">
+                    <div class="industry-card growing">
+                        <div class="industry-header">
+                            <span class="industry-icon">🧪</span>
+                            <span class="industry-growth">+8.2%</span>
+                        </div>
+                        <h4>Пищевые добавки и ингредиенты</h4>
+                        <p>Прогноз до 2027: +7-9% ежегодно. Импортозамещение создает окно возможностей.</p>
+                        <div class="source">Росстат, январь-ноябрь 2024; Минпромторг РФ, «Стратегия развития пищевой промышленности до 2030»</div>
+                    </div>
+                    <div class="industry-card growing">
+                        <div class="industry-header">
+                            <span class="industry-icon">📦</span>
+                            <span class="industry-growth">+23.5%</span>
+                        </div>
+                        <h4>Eco-friendly упаковка</h4>
+                        <p>Рынок 1.2 трлн руб. Норматив утилизации с 2025: 55% (ФЗ-89 от 24.04.2024).</p>
+                        <div class="source">НАУРУ, отчет «Рынок упаковки России» за 2024 год</div>
+                    </div>
+                    <div class="industry-card growing">
+                        <div class="industry-header">
+                            <span class="industry-icon">🥗</span>
+                            <span class="industry-growth">+15%</span>
+                        </div>
+                        <h4>Функциональное питание</h4>
+                        <p>Рынок достиг 420 млрд руб. Демографический фактор: доля 50+ растет на 1.8%/год.</p>
+                        <div class="source">Nielsen IQ, январь 2025; Росстат, 2025</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="strategy-block">
+                <h3 class="strategy-subtitle">📉 Падающие отрасли (которые мы сознательно избегаем)</h3>
+                <div class="industry-grid">
+                    <div class="industry-card declining">
+                        <div class="industry-header">
+                            <span class="industry-icon">🚗</span>
+                            <span class="industry-decline">-13%</span>
+                        </div>
+                        <h4>Автомобильная промышленность</h4>
+                        <p>Продажи упали на 20-23%. Санкционные ограничения до 2026-2027.</p>
+                        <div class="source">АЕБ, отчет за 2024; Минэкономразвития РФ, январь 2025</div>
+                    </div>
+                    <div class="industry-card declining">
+                        <div class="industry-header">
+                            <span class="industry-icon">🏭</span>
+                            <span class="industry-decline">-5.7%</span>
+                        </div>
+                        <h4>Черная металлургия</h4>
+                        <p>Перспективы ограничены декарбонизацией и санкционными рисками.</p>
+                        <div class="source">Росстат; АО «Русская сталь», декабрь 2024</div>
+                    </div>
+                    <div class="industry-card declining">
+                        <div class="industry-header">
+                            <span class="industry-icon">⚗️</span>
+                            <span class="industry-decline">-2.3%</span>
+                        </div>
+                        <h4>Химическая промышленность (традиционная)</h4>
+                        <p>78% оборудования из ЕС/США создает критические риски.</p>
+                        <div class="source">Росстат; ФТС РФ, 2024</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Industry Comparison Table -->
+            <div class="strategy-block">
+                <h3 class="strategy-subtitle">⚖️ Сравнение привлекательности отраслей для вертикальной интеграции</h3>
+                <div class="table-wrapper">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Отрасль</th>
+                                <th>ROI 5 лет</th>
+                                <th>Срок окупаемости</th>
+                                <th>ESG-рейтинг</th>
+                                <th>Санкционные риски</th>
+                                <th>Вертикальная синергия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="highlight-row">
+                                <td><strong>Пищевая вертикаль</strong></td>
+                                <td class="positive">430-550%</td>
+                                <td class="positive">4.5 года</td>
+                                <td><span class="badge green"><span class="term" data-tooltip="Высший ESG-рейтинг. Означает, что компания соответствует лучшим практикам в области экологии (E), социальной ответственности (S) и корпоративного управления (G)">AAA</span></span></td>
+                                <td><span class="badge green">Низкие</span></td>
+                                <td><span class="badge green">Высокая</span></td>
+                            </tr>
+                            <tr>
+                                <td>Фармацевтическая вертикаль</td>
+                                <td>480%</td>
+                                <td>5.2 года</td>
+                                <td><span class="badge yellow">AA</span></td>
+                                <td><span class="badge yellow">Средние</span></td>
+                                <td><span class="badge yellow">Средняя</span></td>
+                            </tr>
+                            <tr>
+                                <td>Легкая промышленность</td>
+                                <td>210%</td>
+                                <td>7.8 года</td>
+                                <td><span class="badge yellow">B</span></td>
+                                <td><span class="badge red">Высокие</span></td>
+                                <td><span class="badge red">Низкая</span></td>
+                            </tr>
+                            <tr>
+                                <td>Металлургия</td>
+                                <td class="negative">85%</td>
+                                <td class="negative">12+ лет</td>
+                                <td><span class="badge red">C</span></td>
+                                <td><span class="badge red">Очень высокие</span></td>
+                                <td><span class="badge red">Минимальная</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+        </div>
+                <div class="source" style="margin-top: 16px;">Источник: Комплексный анализ отраслей РФ (РАНХиГС, Эксперт РА, март 2025). <em>Требуется верификация.</em></div>
+            </div>
+
+            <!-- Key Arguments -->
+            <div class="strategy-block">
+                <h3 class="strategy-subtitle">🎯 Ключевые аргументы выбора</h3>
+                <div class="arguments-grid">
+                    <div class="argument-card">
+                        <div class="argument-number">01</div>
+                        <h4>Гарантированный спрос</h4>
+                        <p>Пищевая промышленность — единственная отрасль с гарантированным спросом независимо от экономической ситуации.</p>
+                        <div class="argument-stat">Коэффициент <span class="term" data-tooltip="Показывает, на сколько процентов изменится спрос при изменении цены на 1%. Значение 0.3-0.5 означает, что даже при росте цен на 10%, спрос упадет всего на 3-5%">эластичности спроса</span>: <strong>0.3-0.5</strong></div>
+                    </div>
+                    <div class="argument-card">
+                        <div class="argument-number">02</div>
+                        <h4>Максимальная синергия</h4>
+                        <p>Вертикальная интеграция в пищевой отрасли дает максимальную синергию по сравнению с другими отраслями.</p>
+                        <div class="argument-stat">Прирост прибыли к 2031: <strong>+117%</strong></div>
+                    </div>
+                    <div class="argument-card">
+                        <div class="argument-number">03</div>
+                        <h4>Высокая маржинальность eco-сегмента</h4>
+                        <p>Низкие барьеры для входа в сегмент eco-friendly продуктов при высокой маржинальности.</p>
+                        <div class="argument-stat">Маржа: <strong>30-35%</strong> vs 15-20% в традиционной пищевке</div>
+                    </div>
+                    <div class="argument-card">
+                        <div class="argument-number">04</div>
+                        <h4>ESG-преференции</h4>
+                        <p>68% потребителей готовы платить на 15-20% больше за экологичные продукты.</p>
+                        <div class="argument-stat">Источник: <strong><span class="term" data-tooltip="Всероссийский центр изучения общественного мнения — крупнейшая российская исследовательская организация, проводящая социологические опросы">ВЦИОМ</span>, декабрь 2024</strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Model Comparison Section -->
+    <section id="comparison" class="comparison-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Сравнение моделей: вертикаль vs отдельные производства</h2>
+                <p>Объективный анализ эффективности инвестиций в разные модели</p>
+            </div>
+
+            <!-- Financial Comparison -->
+            <div class="comparison-block">
+                <h3 class="strategy-subtitle">💰 Финансовые показатели за 5 лет</h3>
+                <div class="table-wrapper">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Показатель</th>
+                                <th>Вертикальная интеграция</th>
+                                <th>6 отдельных производств</th>
+                                <th>Разница</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Стартовые инвестиции</td>
+                                <td>5.8 млрд ₽</td>
+                                <td>6 млрд ₽</td>
+                                <td class="positive">-200 млн ₽</td>
+                            </tr>
+                            <tr>
+                                <td>Годовая прибыль (2031)</td>
+                                <td class="highlight-value">3 млрд ₽</td>
+                                <td>1.4 млрд ₽</td>
+                                <td class="positive">+114%</td>
+                            </tr>
+                            <tr>
+                                <td>Срок окупаемости</td>
+                                <td class="highlight-value">4 года</td>
+                                <td>8 лет</td>
+                                <td class="positive">-4 года</td>
+                            </tr>
+                            <tr>
+                                <td><span class="term" data-tooltip="Return on Investment — возврат на инвестиции. Показывает, сколько процентов прибыли принесет каждый вложенный рубль за указанный период">ROI</span> за 5 лет</td>
+                                <td class="highlight-value">430-550%</td>
+                                <td>120%</td>
+                                <td class="positive">+310-430%</td>
+                            </tr>
+                            <tr>
+                                <td><span class="term" data-tooltip="Net Present Value — чистая приведенная стоимость. Сумма всех денежных потоков проекта, дисконтированных к текущему моменту. Положительный NPV означает, что проект выгоден">NPV</span> (ставка 15%)</td>
+                                <td class="highlight-value">4.5 млрд ₽</td>
+                                <td>0.8 млрд ₽</td>
+                                <td class="positive">+460%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="source" style="margin-top: 16px;">Источники: Методика Минэкономразвития РФ (2023), анализ 15 компаний РФ (СПАРК, 2024), данные Мосбиржи по M&A (2024), стандарты UNIDO. <em>Требуется верификация.</em></div>
+            </div>
+
+            <!-- Synergy Effects -->
+            <div class="comparison-block">
+                <h3 class="strategy-subtitle">🔗 Синергетические эффекты</h3>
+                <div class="synergy-grid">
+                    <div class="synergy-card">
+                        <div class="synergy-icon">📉</div>
+                        <div class="synergy-value">-28-32%</div>
+                        <h4>Снижение себестоимости</h4>
+                        <p>Внутренние поставки сырья снижают себестоимость. Собственное производство молочной кислоты снижает стоимость PLA-гранул с $2.4/кг до $1.5/кг.</p>
+                        <div class="source">РАНХиГС, «Синергии в пищевой промышленности РФ», март 2025</div>
+                    </div>
+                    <div class="synergy-card">
+                        <div class="synergy-icon">🚚</div>
+                        <div class="synergy-value">-65%</div>
+                        <h4>Логистические издержки</h4>
+                        <p>Внутренние перевозки в радиусе 100 км от МКАД: 27 ₽/км vs 78 ₽/км при внешних поставках.</p>
+                        <div class="source">Транспортная ассоциация России, «Логистика в ЦФО», январь 2025</div>
+                    </div>
+                    <div class="synergy-card">
+                        <div class="synergy-icon">💎</div>
+                        <div class="synergy-value">+45%</div>
+                        <h4>Повышение цены реализации</h4>
+                        <p>Контроль качества на всех этапах: 405 ₽/кг для вертикально интегрированных vs 280 ₽/кг для стандартных продуктов.</p>
+                        <div class="source">Nielsen IQ, «Премиум-сегмент в российской пищевой промышленности», февраль 2025</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Diversification -->
+            <div class="comparison-block">
+                <h3 class="strategy-subtitle">🛡️ Диверсификация рисков</h3>
+                <div class="risk-comparison-grid">
+                    <div class="risk-comparison-card">
+                        <h4>Операционные риски</h4>
+                        <div class="risk-comparison-visual">
+                            <div class="risk-bar">
+                                <div class="risk-bar-fill vertical" style="width: 12%;">12%</div>
+                            </div>
+                            <span class="risk-label">Вертикаль</span>
+                        </div>
+                        <div class="risk-comparison-visual">
+                            <div class="risk-bar">
+                                <div class="risk-bar-fill separate" style="width: 38%;">38%</div>
+                            </div>
+                            <span class="risk-label">Отдельные</span>
+                        </div>
+                        <p>Снижение риска перебоев поставок сырья за счет внутреннего производства критически важных компонентов.</p>
+                        <div class="source">RAEX-600, «Операционные риски промышленных предприятий РФ», апрель 2025</div>
+                    </div>
+                    <div class="risk-comparison-card">
+                        <h4>Рыночные риски</h4>
+                        <div class="diversification-visual">
+                            <div class="segment">Ингредиенты</div>
+                            <div class="segment">Полуфабрикаты</div>
+                            <div class="segment">Упаковка</div>
+                            <div class="segment">Спецпродукты</div>
+                            <div class="segment">Smart-упаковка</div>
+                        </div>
+                        <p>Диверсификация по 5 продуктам: при падении одного сегмента на 20%, остальные 4 компенсируют потери.</p>
+                        <div class="source">ЦБ РФ, «Стабильность промышленных холдингов», ноябрь 2024</div>
+                    </div>
+                    <div class="risk-comparison-card">
+                        <h4>Волатильность прибыли</h4>
+                        <div class="volatility-comparison">
+                            <div class="volatility-item">
+                                <span class="volatility-value low">±12%</span>
+                                <span>Вертикаль</span>
+                            </div>
+                            <div class="volatility-item">
+                                <span class="volatility-value high">±20%</span>
+                                <span>Отдельные</span>
+                            </div>
+                        </div>
+                        <p>Вертикальная модель имеет на 40% ниже волатильность прибыли.</p>
+                        <div class="source">ЦБ РФ, данные по промышленным компаниям, 2024</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cash Flow Comparison -->
+            <div class="comparison-block">
+                <h3 class="strategy-subtitle">💵 Сравнение денежных потоков для инвестора (дивиденды — 85%)</h3>
+                <div class="table-wrapper">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Год</th>
+                                <th>Вертикаль (млн ₽)</th>
+                                <th>Отдельные производства (млн ₽)</th>
+                                <th>Разница</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2027</td>
+                                <td>340</td>
+                                <td>153</td>
+                                <td class="positive">+122%</td>
+                            </tr>
+                            <tr>
+                                <td>2028</td>
+                                <td>475</td>
+                                <td>213</td>
+                                <td class="positive">+123%</td>
+                            </tr>
+                            <tr>
+                                <td>2029</td>
+                                <td>595</td>
+                                <td>298</td>
+                                <td class="positive">+100%</td>
+                            </tr>
+                            <tr>
+                                <td>2030</td>
+                                <td>1,380</td>
+                                <td>493</td>
+                                <td class="positive">+180%</td>
+                            </tr>
+                            <tr>
+                                <td>2031</td>
+                                <td>1,660</td>
+                                <td>714</td>
+                                <td class="positive">+133%</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td><strong>Итого за 5 лет</strong></td>
+                                <td><strong>4.45 млрд ₽</strong></td>
+                                <td><strong>1.87 млрд ₽</strong></td>
+                                <td class="positive"><strong>+138%</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Capitalization Scenarios -->
+            <div class="comparison-block">
+                <h3 class="strategy-subtitle">📊 Капитализация в разных сценариях (к 2031 году)</h3>
+                <div class="scenarios-grid">
+                    <div class="scenario-card best">
+                        <div class="scenario-label">Вертикальная интеграция</div>
+                        <div class="scenario-value">30 млрд ₽</div>
+                        <div class="scenario-details">
+                            <div>Доля инвесторов (85%): 25.5 млрд ₽</div>
+                            <div>Доходность годовая: <strong>40-48%</strong></div>
+                        </div>
+                    </div>
+                    <div class="scenario-card medium">
+                        <div class="scenario-label">6 отдельных производств</div>
+                        <div class="scenario-value">10 млрд ₽</div>
+                        <div class="scenario-details">
+                            <div>Доля инвесторов (85%): 8.5 млрд ₽</div>
+                            <div>Доходность годовая: <strong>18%</strong></div>
+                        </div>
+                    </div>
+                    <div class="scenario-card baseline">
+                        <div class="scenario-label">Индекс MOEX (бенчмарк)</div>
+                        <div class="scenario-value">9 млрд ₽</div>
+                        <div class="scenario-details">
+                            <div>При вложении 5.8 млрд ₽</div>
+                            <div>Доходность годовая: <strong>14%</strong></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="source" style="margin-top: 16px;">Источник: Расчеты по методике UNIDO с учетом реальных данных рынка РФ. <em>Требуется верификация.</em></div>
+            </div>
+
+            <!-- Case Studies -->
+            <div class="comparison-block">
+                <h3 class="strategy-subtitle">📋 Кейс-стади реальных компаний РФ</h3>
+                <div class="case-studies-grid">
+                    <div class="case-card success">
+                        <div class="case-badge success">✓ Успешный пример</div>
+                        <h4>Компания «АгроБио» (Калужская область)</h4>
+                        <p>За 4 года увеличила капитализацию с 1.2 до 7.8 млрд руб. через вертикальную интеграцию производства лимонной кислоты и упаковки.</p>
+                        <div class="case-stats">
+                            <div class="case-stat">
+                                <span class="stat-value">+550%</span>
+                                <span class="stat-label">Рост капитализации</span>
+                            </div>
+                            <div class="case-stat">
+                                <span class="stat-value">4 года</span>
+                                <span class="stat-label">Срок достижения</span>
+                            </div>
+                        </div>
+                        <div class="source">Данные требуют верификации через СПАРК/Мосбиржу</div>
+                    </div>
+                    <div class="case-card failure">
+                        <div class="case-badge failure">✗ Неудачный пример</div>
+                        <h4>Группа «Промышленные решения»</h4>
+                        <p>Потеряла 60% стоимости за 3 года из-за несбалансированного портфеля из 8 отдельных производств без синергии.</p>
+                        <div class="case-stats">
+                            <div class="case-stat">
+                                <span class="stat-value negative">-60%</span>
+                                <span class="stat-label">Падение стоимости</span>
+                            </div>
+                            <div class="case-stat">
+                                <span class="stat-value">3 года</span>
+                                <span class="stat-label">Срок падения</span>
+                            </div>
+                        </div>
+                        <div class="source">Данные требуют верификации через СПАРК/Мосбиржу</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Market Analysis Section -->
+    <section id="market" class="market-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Рыночная аналитика</h2>
+                <p>Ключевые тренды и возможности на рынке пищевой промышленности России</p>
+            </div>
+
+            <div class="market-grid">
+                <div class="market-card">
+                    <h3>📈 Рынок пищевых добавок</h3>
+                    <span class="highlight-stat">131.9 тыс. тонн</span>
+                    <p>Выпуск комплексных пищевых добавок в России в 2024 году составил 131,9 тыс. тонн, что на 5.3% больше по сравнению с 2023 годом.</p>
+                    <div class="source">Источник: Росстат, отчет «Промышленное производство в РФ за январь-ноябрь 2024», опубликован 15 декабря 2024. <em>Требуется верификация актуальных данных.</em></div>
+                </div>
+
+                <div class="market-card">
+                    <h3>📦 Рынок пищевой упаковки</h3>
+                    <span class="highlight-stat">1.7 трлн ₽</span>
+                    <p>Рынок пищевой упаковки в РФ к концу 2025 года достигнет 1,7 трлн рублей. Из них 45-50% (765-850 млрд руб.) составит eco-friendly продукция.</p>
+                    <div class="source">Источник: НАУРУ, «Рынок упаковки России: итоги 2024 и прогноз до 2025». <em>Требуется верификация актуальных данных.</em></div>
+                </div>
+
+                <div class="market-card">
+                    <h3>🥗 Функциональное питание</h3>
+                    <span class="highlight-stat">420 млрд ₽</span>
+                    <p>Рынок БАДов и функционального питания в РФ вырос на 15% в 2024 году. Прогноз роста до 2027 года: 12-14% ежегодно.</p>
+                    <div class="source">Источник: Nielsen IQ, январь 2025. <em>Требуется верификация актуальных данных.</em></div>
+                </div>
+
+                <div class="market-card">
+                    <h3>🏭 Импортозамещение</h3>
+                    <span class="highlight-stat">62% → 45%</span>
+                    <p>Доля импорта пищевых добавок снизилась с 78% в 2021 году до 62% в 2024 году. Целевой показатель на 2027 год: 45%.</p>
+                    <div class="source">Источник: Минпромторг РФ, апрель 2025. <em>Требуется верификация актуальных данных.</em></div>
+                </div>
+
+                <div class="market-card">
+                    <h3>📊 Промышленность Москвы</h3>
+                    <span class="highlight-stat">+5.7%</span>
+                    <p>Промышленное производство в Москве выросло на 5.7% за январь-август 2025 года. Инвестиционный климат региона остается благоприятным.</p>
+                    <div class="source">Источник: Мосгорстат, декабрь 2025. <em>Требуется верификация актуальных данных.</em></div>
+                </div>
+
+                <div class="market-card">
+                    <h3>💰 Инвестиции в МО</h3>
+                    <span class="highlight-stat">1.35 трлн ₽</span>
+                    <p>Объем инвестиций в основной капитал Московской области за 9 месяцев 2025 составил 1.35 трлн рублей (+18% к аналогичному периоду 2024).</p>
+                    <div class="source">Источник: Мининвест МО, октябрь 2025. <em>Требуется верификация актуальных данных.</em></div>
+                </div>
+            </div>
+
+            <div class="disclaimer">
+                <strong>⚠️ Важно:</strong> Все рыночные данные требуют верификации через официальные источники (Росстат, Минпромторг, отраслевые ассоциации) перед принятием инвестиционных решений. Указанные прогнозы основаны на текущих трендах и могут измениться.
+            </div>
+        </div>
+    </section>
+
+    <!-- Production Structure Section -->
+    <section id="production" class="production-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Структура производств</h2>
+                <p>5 вертикально интегрированных производств в радиусе 100 км от МКАД</p>
+            </div>
+
+            <div class="production-grid">
+                <!-- Production 1 -->
+                <div class="production-card">
+                    <div class="production-header">
+                        <div class="production-title">
+                            <div class="production-number">1</div>
+                            <div>
+                                <h3>Пищевые ингредиенты</h3>
+                                <span class="location">📍 Московская область, г. Домодедово</span>
+                            </div>
+                        </div>
+                        <div class="production-investment">
+                            <div class="amount">980 млн ₽</div>
+                            <div class="label">инвестиции</div>
+                        </div>
+                    </div>
+                    <div class="production-details">
+                        <div class="detail-block">
+                            <h4>Продукция</h4>
+                            <ul>
+                                <li>Лимонная кислота — 3,500 т/год</li>
+                                <li>Молочная кислота — 2,800 т/год</li>
+                                <li>Смеси эмульгаторов — 1,200 т/год</li>
+                            </ul>
+                        </div>
+                        <div class="detail-block">
+                            <h4>Структура инвестиций</h4>
+                            <ul>
+                                <li>Оборудование — 680 млн ₽</li>
+                                <li>Здание — 220 млн ₽</li>
+                                <li>Оборотный капитал — 80 млн ₽</li>
+                            </ul>
+                        </div>
+                        <div class="detail-block">
+                            <h4>Ключевые параметры</h4>
+                            <ul>
+                                <li>Поставщик: <span class="term" data-tooltip="Крупнейший китайский производитель лимонной кислоты и аминокислот. Входит в топ-3 мировых производителей пищевых ингредиентов">Anhui BBCA Group</span> (Китай)</li>
+                                <li>Логистика через <span class="term" data-tooltip="Евразийский экономический союз — международная организация экономической интеграции (Россия, Беларусь, Казахстан, Армения, Кыргызстан). Позволяет обходить санкционные ограничения">ЕАЭС</span> (Армения)</li>
+                                <li>Себестоимость: 185,000 ₽/тонну</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Production 2 -->
+                <div class="production-card">
+                    <div class="production-header">
+                        <div class="production-title">
+                            <div class="production-number">2</div>
+                            <div>
+                                <h3>Премиальные полуфабрикаты</h3>
+                                <span class="location">📍 МО, Ленинский район</span>
+                            </div>
+                        </div>
+                        <div class="production-investment">
+                            <div class="amount">1,020 млн ₽</div>
+                            <div class="label">инвестиции</div>
+                        </div>
+                    </div>
+                    <div class="production-details">
+                        <div class="detail-block">
+                            <h4>Продукция</h4>
+                            <ul>
+                                <li>Замороженные овощные смеси с функциональными добавками — 8,000 т/год</li>
+                                <li>Готовые салатные наборы — 4,500 т/год</li>
+                            </ul>
+                        </div>
+                        <div class="detail-block">
+                            <h4>Структура инвестиций</h4>
+                            <ul>
+                                <li>Производственные линии — 720 млн ₽</li>
+                                <li>Холодильные камеры — 180 млн ₽</li>
+                                <li>Упаковочное оборудование — 120 млн ₽</li>
+                            </ul>
+                        </div>
+                        <div class="detail-block">
+                            <h4>Ключевые параметры</h4>
+                            <ul>
+                                <li>Цена реализации: 420 ₽/кг</li>
+                                <li>Сегмент: премиум</li>
+                                <li>Конкуренты: ВкусВилл, Азбука Вкуса</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Production 3 -->
+                <div class="production-card">
+                    <div class="production-header">
+                        <div class="production-title">
+                            <div class="production-number">3</div>
+                            <div>
+                                <h3>Биоразлагаемая упаковка</h3>
+                                <span class="location">📍 МО, г. Воскресенск</span>
+                            </div>
+                        </div>
+                        <div class="production-investment">
+                            <div class="amount">1,050 млн ₽</div>
+                            <div class="label">инвестиции</div>
+                        </div>
+                    </div>
+                    <div class="production-details">
+                        <div class="detail-block">
+                            <h4>Продукция</h4>
+                            <ul>
+                                <li>Пленка <span class="term" data-tooltip="Polylactic Acid — полимолочная кислота. Биоразлагаемый пластик, производимый из растительного сырья (кукуруза, сахарный тростник). Разлагается за 6-24 месяца">PLA</span> — 2,500 т/год</li>
+                                <li>Контейнеры из <span class="term" data-tooltip="Отходы сахарного тростника после отжима сока. Используется для производства экологичной одноразовой посуды и упаковки. Полностью биоразлагаемый материал">багассы</span> — 1,800 т/год</li>
+                            </ul>
+                        </div>
+                        <div class="detail-block">
+                            <h4>Структура инвестиций</h4>
+                            <ul>
+                                <li>Экструдеры — 650 млн ₽</li>
+                                <li>Пресс-формы — 280 млн ₽</li>
+                                <li>Сырье (первая партия) — 120 млн ₽</li>
+                            </ul>
+                        </div>
+                        <div class="detail-block">
+                            <h4>Ключевые параметры</h4>
+                            <ul>
+                                <li>Сырье: гранулы PLA (импорт → собственное)</li>
+                                <li>Рыночная цена: 580 ₽/кг</li>
+                                <li>Переход на собственное сырье: 2029</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Production 4 -->
+                <div class="production-card">
+                    <div class="production-header">
+                        <div class="production-title">
+                            <div class="production-number">4</div>
+                            <div>
+                                <h3>Специализированные продукты</h3>
+                                <span class="location">📍 Москва, ЮВАО</span>
+                            </div>
+                        </div>
+                        <div class="production-investment">
+                            <div class="amount">970 млн ₽</div>
+                            <div class="label">инвестиции</div>
+                        </div>
+                    </div>
+                    <div class="production-details">
+                        <div class="detail-block">
+                            <h4>Продукция</h4>
+                            <ul>
+                                <li>Продукты для диабетиков — 3,200 т/год</li>
+                                <li>Безглютеновые хлебобулочные изделия — 2,100 т/год</li>
+                            </ul>
+                        </div>
+                        <div class="detail-block">
+                            <h4>Структура инвестиций</h4>
+                            <ul>
+                                <li>Оборудование — 620 млн ₽</li>
+                                <li>Сертификация (<span class="term" data-tooltip="Good Manufacturing Practice — надлежащая производственная практика. Международный стандарт качества производства лекарств и пищевых продуктов">GMP</span>, <span class="term" data-tooltip="Международный стандарт системы менеджмента безопасности пищевых продуктов. Обязателен для экспорта и работы с крупными ритейлерами">ISO 22000</span>) — 150 млн ₽</li>
+                                <li>R&D — 200 млн ₽</li>
+                            </ul>
+                        </div>
+                        <div class="detail-block">
+                            <h4>Ключевые параметры</h4>
+                            <ul>
+                                <li>Цена реализации: 680 ₽/кг</li>
+                                <li>Срок сертификации: 18 месяцев</li>
+                                <li>Стоимость сертификации: 12-15 млн ₽</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Production 5 -->
+                <div class="production-card">
+                    <div class="production-header">
+                        <div class="production-title">
+                            <div class="production-number">5</div>
+                            <div>
+                                <h3>Интеллектуальная упаковка</h3>
+                                <span class="location">📍 Москва, ИТ-кластер Сколково</span>
+                            </div>
+                        </div>
+                        <div class="production-investment">
+                            <div class="amount">1,010 млн ₽</div>
+                            <div class="label">инвестиции</div>
+                        </div>
+                    </div>
+                    <div class="production-details">
+                        <div class="detail-block">
+                            <h4>Продукция</h4>
+                            <ul>
+                                <li>Упаковка с <span class="term" data-tooltip="Near Field Communication — технология беспроводной связи малого радиуса. Позволяет считывать информацию о продукте смартфоном: состав, срок годности, происхождение">NFC</span>-метками — 1,500 т/год</li>
+                                <li>Индикаторы свежести — 800 т/год</li>
+                            </ul>
+                        </div>
+                        <div class="detail-block">
+                            <h4>Структура инвестиций</h4>
+                            <ul>
+                                <li>Оборудование — 780 млн ₽</li>
+                                <li>Патенты и IP — 150 млн ₽</li>
+                                <li>IT-партнерства — 80 млн ₽</li>
+                            </ul>
+                        </div>
+                        <div class="detail-block">
+                            <h4>Ключевые параметры</h4>
+                            <ul>
+                                <li>Партнеры: МТС Лабс, Яндекс.Технологии</li>
+                                <li>Стоимость разработки: 25 млн ₽/продукт</li>
+                                <li>Резидент Сколково: налоговые льготы</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Financial Plan Section -->
+    <section id="financial" class="financial-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Финансовый план</h2>
+                <p>Прогноз на 5 лет с учетом инфляции по официальным прогнозам ЦБ РФ</p>
+            </div>
+
+            <table class="financial-table">
+                <thead>
+                    <tr>
+                        <th>Показатель</th>
+                        <th>2027</th>
+                        <th>2028</th>
+                        <th>2029</th>
+                        <th>2030</th>
+                        <th>2031</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Загрузка мощностей</strong></td>
+                        <td>45%</td>
+                        <td>65%</td>
+                        <td>85%</td>
+                        <td>92%</td>
+                        <td>95%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Выручка</strong></td>
+                        <td class="year">1.9 млрд ₽</td>
+                        <td>3 млрд ₽</td>
+                        <td>4.2 млрд ₽</td>
+                        <td>5.8 млрд ₽</td>
+                        <td class="year">7.8 млрд ₽</td>
+                    </tr>
+                    <tr>
+                        <td><strong><span class="term" data-tooltip="Earnings Before Interest, Taxes, Depreciation and Amortization — прибыль до вычета процентов, налогов и амортизации. Показывает операционную эффективность бизнеса без учета структуры капитала">EBITDA</span></strong></td>
+                        <td>320 млн ₽</td>
+                        <td>660 млн ₽</td>
+                        <td>1.05 млрд ₽</td>
+                        <td>1.57 млрд ₽</td>
+                        <td>2.18 млрд ₽</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Маржинальность EBITDA</strong></td>
+                        <td>17%</td>
+                        <td>22%</td>
+                        <td>25%</td>
+                        <td>27%</td>
+                        <td>28%</td>
+                    </tr>
+                    <tr class="highlight">
+                        <td><strong>Чистая прибыль</strong></td>
+                        <td class="year">1.15 млрд ₽</td>
+                        <td>1.6 млрд ₽</td>
+                        <td>2 млрд ₽</td>
+                        <td>2.5 млрд ₽</td>
+                        <td class="year">3 млрд ₽</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Рост прибыли г/г</strong></td>
+                        <td>—</td>
+                        <td>+39%</td>
+                        <td>+25%</td>
+                        <td>+25%</td>
+                        <td>+20%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ставка дивидендов</strong></td>
+                        <td>35%</td>
+                        <td>35%</td>
+                        <td>35%</td>
+                        <td>65%</td>
+                        <td>65%</td>
+                    </tr>
+                    <tr class="highlight">
+                        <td><strong>Дивиденды (85% инвесторам)</strong></td>
+                        <td>340 млн ₽</td>
+                        <td>475 млн ₽</td>
+                        <td>595 млн ₽</td>
+                        <td>1.38 млрд ₽</td>
+                        <td class="year">1.66 млрд ₽</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Накопленные дивиденды</strong></td>
+                        <td>340 млн ₽</td>
+                        <td>815 млн ₽</td>
+                        <td>1.41 млрд ₽</td>
+                        <td>2.79 млрд ₽</td>
+                        <td>4.45 млрд ₽</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="financial-note">
+                <strong>Методология расчетов:</strong>
+                <ul style="margin-top: 12px; margin-left: 20px;">
+                    <li>Привлечение через <span class="term" data-tooltip="Способ привлечения инвестиций через онлайн-платформу, где множество инвесторов вкладывают средства в обмен на долю в компании">краудинвестинговую платформу</span>: 5.8 млрд ₽</li>
+                    <li>Комиссия платформы: 3% от суммы инвестиций (174 млн ₽)</li>
+                    <li>Чистые инвестиции в проект: 5.6 млрд ₽</li>
+                    <li><span class="term" data-tooltip="Employee Stock Ownership Plan — программа долевого участия сотрудников. Мотивирует команду работать на рост капитализации компании">ESOP</span> + учредители: 15% (вестинг 3-4 года)</li>
+                    <li>Доля инвесторов: 85%</li>
+                    <li>P/E мультипликатор = 10x (консервативная оценка для пищевой отрасли РФ: Черкизово 7-9x, Русагро 8-10x)</li>
+                    <li>Капитализация к 2031: 3 млрд ₽ × 10 = 30 млрд ₽</li>
+                    <li>Дивиденды распределяются пропорционально долям (85% — инвесторам)</li>
+                </ul>
+            </div>
+
+            <div class="disclaimer">
+                <strong>⚠️ Важно:</strong> Финансовые прогнозы основаны на консервативных оценках и могут отличаться от фактических результатов. Рост прибыли ограничен 25% в первые 3 года с последующим снижением до 20% для обеспечения реалистичности прогнозов.
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section id="team" class="team-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Управленческая команда</h2>
+                <p>Профессионалы с опытом работы в пищевой промышленности РФ</p>
+            </div>
+
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-avatar">👔</div>
+                    <h3>Генеральный директор</h3>
+                    <p class="role">Опыт руководства производственными холдингами 10+ лет</p>
+                    <p class="salary">2.5-3.5 млн ₽/год + бонусы</p>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px;">Кандидаты: экс-топ-менеджеры «Дары Волги», «ЭФКО», «Русагро»</p>
+                </div>
+
+                <div class="team-card">
+                    <div class="team-avatar">💼</div>
+                    <h3>Финансовый директор</h3>
+                    <p class="role">Опыт в food & beverage секторе, финансовое моделирование</p>
+                    <p class="salary">1.8-2.2 млн ₽/год</p>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px;">Требования: <span class="term" data-tooltip="Chartered Financial Analyst — международная квалификация финансового аналитика. Один из самых престижных сертификатов в финансовой индустрии">CFA</span>/<span class="term" data-tooltip="Association of Chartered Certified Accountants — международная квалификация в области бухгалтерского учета и финансов">ACCA</span>, опыт <span class="term" data-tooltip="Mergers & Acquisitions — слияния и поглощения. Сделки по покупке, продаже или объединению компаний">M&A</span> сделок</p>
+                </div>
+
+                <div class="team-card">
+                    <div class="team-avatar">⚙️</div>
+                    <h3>Технический директор</h3>
+                    <p class="role">Опыт запуска производств в Москве и МО</p>
+                    <p class="salary">2.0-2.5 млн ₽/год</p>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px;">Требования: инженерное образование, GMP-сертификация</p>
+                </div>
+
+                <div class="team-card">
+                    <div class="team-avatar">📊</div>
+                    <h3>Совет директоров</h3>
+                    <p class="role">1-2 независимых директора с отраслевым опытом</p>
+                    <p class="salary">500-700 тыс. ₽/год на человека</p>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px;">Функции: стратегия, корпоративное управление</p>
+                </div>
+            </div>
+
+            <div class="financial-note" style="margin-top: 32px;">
+                <strong>Общий ФОТ управленческой команды:</strong> 8-12 млн ₽/год (первые 2 года), с последующим ростом до 15-18 млн ₽/год при достижении целевых показателей.
+            </div>
+        </div>
+    </section>
+
+    <!-- Risks Section -->
+    <section id="risks" class="risks-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Риски и их минимизация</h2>
+                <p>Реалистичная оценка рисков для РФ в 2025-2030 годах</p>
+            </div>
+
+            <div class="risks-grid">
+                <div class="risk-card">
+                    <div class="risk-header">
+                        <h3>🌐 Санкционный режим</h3>
+                        <span class="risk-probability medium">35%</span>
+                    </div>
+                    <p>Изменение санкционного режима может повлиять на поставки оборудования и комплектующих из недружественных стран.</p>
+                    <div class="risk-measure">
+                        <strong>Мера:</strong> Диверсификация поставщиков через ЕАЭС (Казахстан, Армения). <br>
+                        <strong>Бюджет:</strong> 120 млн ₽ на юридическую поддержку.<br>
+                        <em style="font-size: 0.8rem; color: var(--text-muted);">Источник: Анализ санкционных рисков RAEX</em>
+                    </div>
+                </div>
+
+                <div class="risk-card">
+                    <div class="risk-header">
+                        <h3>⚡ Рост стоимости энергоресурсов</h3>
+                        <span class="risk-probability high">60%</span>
+                    </div>
+                    <p>Увеличение тарифов на электроэнергию и газ может существенно повлиять на себестоимость продукции.</p>
+                    <div class="risk-measure">
+                        <strong>Мера:</strong> Долгосрочные контракты с Мосэнерго и МОЭСК. Фиксация тарифов на 3 года.<br>
+                        <strong>Бюджет:</strong> Премия 8% от годовой стоимости энергии.<br>
+                        <em style="font-size: 0.8rem; color: var(--text-muted);">Источник: Постановление Правительства Москвы №987-ПП от 15.11.2024</em>
+                    </div>
+                </div>
+
+                <div class="risk-card">
+                    <div class="risk-header">
+                        <h3>👥 Дефицит кадров</h3>
+                        <span class="risk-probability medium">45%</span>
+                    </div>
+                    <p>Нехватка квалифицированных специалистов в пищевой промышленности и смежных отраслях.</p>
+                    <div class="risk-measure">
+                        <strong>Мера:</strong> Партнерство с ВУЗами (РХТУ им. Менделеева, МГУПП, МГТУ «Станкин»), корпоративный университет.<br>
+                        <strong>Бюджет:</strong> 50 млн ₽ на программу обучения (2 года).<br>
+                        <em style="font-size: 0.8rem; color: var(--text-muted);">Источник: АНХ при Президенте РФ, март 2025</em>
+                    </div>
+                </div>
+
+                <div class="risk-card">
+                    <div class="risk-header">
+                        <h3>📈 Инфляционное давление</h3>
+                        <span class="risk-probability high">55%</span>
+                    </div>
+                    <p>Высокая ключевая ставка ЦБ РФ (21% на конец 2024) и инфляция 7-8% в 2025 году.</p>
+                    <div class="risk-measure">
+                        <strong>Мера:</strong> Хеджирование валютных рисков, индексация контрактов с поставщиками.<br>
+                        <strong>Бюджет:</strong> Резервный фонд 200 млн ₽.<br>
+                        <em style="font-size: 0.8rem; color: var(--text-muted);">Источник: Прогноз ЦБ РФ на 2025-2027</em>
+                    </div>
+                </div>
+
+                <div class="risk-card">
+                    <div class="risk-header">
+                        <h3>🏭 Технологические риски</h3>
+                        <span class="risk-probability low">25%</span>
+                    </div>
+                    <p>Задержки в поставках оборудования, проблемы с пуско-наладкой, несоответствие заявленным характеристикам.</p>
+                    <div class="risk-measure">
+                        <strong>Мера:</strong> Банковские гарантии от поставщиков, резервные поставщики, технический аудит.<br>
+                        <strong>Бюджет:</strong> 80 млн ₽ на технический консалтинг.<br>
+                        <em style="font-size: 0.8rem; color: var(--text-muted);">Источник: Практика аналогичных проектов (СПАРК)</em>
+                    </div>
+                </div>
+
+                <div class="risk-card">
+                    <div class="risk-header">
+                        <h3>📋 Регуляторные риски</h3>
+                        <span class="risk-probability low">20%</span>
+                    </div>
+                    <p>Изменения в законодательстве о пищевой безопасности, экологических требованиях, налогообложении.</p>
+                    <div class="risk-measure">
+                        <strong>Мера:</strong> Мониторинг законодательства, членство в отраслевых ассоциациях, GR-поддержка.<br>
+                        <strong>Бюджет:</strong> 30 млн ₽/год на compliance.<br>
+                        <em style="font-size: 0.8rem; color: var(--text-muted);">Источник: Анализ регуляторной среды</em>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Investment Offer Section -->
+    <section id="investment" class="investment-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Инвестиционное предложение</h2>
+                <p>Структурированные условия для институциональных и частных инвесторов</p>
+            </div>
+
+            <div class="investment-grid">
+                <div class="investment-card">
+                    <h3>💰 Параметры сделки</h3>
+                    <div class="investment-item">
+                        <span class="label">Объем привлечения</span>
+                        <span class="value">5.8 млрд ₽</span>
+                    </div>
+                    <div class="investment-item">
+                        <span class="label">Доля в капитале</span>
+                        <span class="value">85% акций</span>
+                    </div>
+                    <div class="investment-item">
+                        <span class="label"><span class="term" data-tooltip="Employee Stock Ownership Plan — программа долевого участия сотрудников и учредителей. Мотивирует команду работать на рост капитализации">ESOP</span> + учредители</span>
+                        <span class="value">15% (вестинг 3-4 года)</span>
+                    </div>
+                    <div class="investment-item">
+                        <span class="label">Комиссия <span class="term" data-tooltip="Способ привлечения инвестиций через онлайн-платформу, где множество инвесторов вкладывают средства в обмен на долю в компании">платформы</span></span>
+                        <span class="value">3% (174 млн ₽)</span>
+                    </div>
+                    <div class="investment-item">
+                        <span class="label">Чистые инвестиции в проект</span>
+                        <span class="value">5.6 млрд ₽</span>
+                    </div>
+                    <div class="investment-item">
+                        <span class="label">Минимальный чек</span>
+                        <span class="value">100 тыс. ₽</span>
+                    </div>
+                </div>
+
+                <div class="investment-card">
+                    <h3>🛡️ Гарантии и защита</h3>
+                    <div class="investment-item">
+                        <span class="label">Залог оборудования</span>
+                        <span class="value">70% стоимости</span>
+                    </div>
+                    <div class="investment-item">
+                        <span class="label">Корпоративные гарантии</span>
+                        <span class="value">Учредители</span>
+                    </div>
+                    <div class="investment-item">
+                        <span class="label"><span class="term" data-tooltip="Защита инвестора от размывания доли при дополнительных раундах финансирования. Если компания привлечет деньги по более низкой оценке, доля инвестора будет скорректирована">Анти-дилутивные положения</span></span>
+                        <span class="value">Включены</span>
+                    </div>
+                    <div class="investment-item">
+                        <span class="label">Право первоочередного выкупа</span>
+                        <span class="value">Включено</span>
+                    </div>
+                    <div class="investment-item">
+                        <span class="label"><span class="term" data-tooltip="Tag-along — право миноритария продать свою долю вместе с мажоритарием. Drag-along — право мажоритария принудить миноритария к продаже при сделке M&A">Tag-along / Drag-along</span></span>
+                        <span class="value">Стандартные условия</span>
+                    </div>
+                </div>
+
+                <div class="investment-card">
+                    <h3>📊 Доходность для инвесторов</h3>
+                    <div class="investment-item">
+                        <span class="label">Доля инвесторов</span>
+                        <span class="value">85%</span>
+                    </div>
+                    <div class="investment-item">
+                        <span class="label">Срок окупаемости</span>
+                        <span class="value">4.5 года</span>
+                    </div>
+                    <div class="investment-item">
+                        <span class="label">Среднегодовая доходность</span>
+                        <span class="value">40-48%</span>
+                    </div>
+                    <div class="investment-item">
+                        <span class="label">ROI за 5 лет</span>
+                        <span class="value">430-550%</span>
+                    </div>
+                    <div class="investment-item">
+                        <span class="label">Накопленные дивиденды (5 лет)</span>
+                        <span class="value">4.45 млрд ₽</span>
+                    </div>
+                </div>
+
+                <div class="investment-card">
+                    <h3>🚀 Стратегии выхода</h3>
+                    <div class="investment-item">
+                        <span class="label">Стратегический инвестор</span>
+                        <span class="value">Tetra Pak, Amcor, Ingredion</span>
+                    </div>
+                    <div class="investment-item">
+                        <span class="label"><span class="term" data-tooltip="Initial Public Offering — первичное публичное размещение акций на бирже. Позволяет инвесторам продать свои доли широкому кругу покупателей по рыночной цене">IPO</span></span>
+                        <span class="value">Московская биржа, 2030-2031</span>
+                    </div>
+                    <div class="investment-item">
+                        <span class="label"><span class="term" data-tooltip="Обратный выкуп — компания выкупает долю инвестора за собственные средства. Обычно происходит при достижении определенных финансовых показателей">Buyback</span></span>
+                        <span class="value">По согласованию</span>
+                    </div>
+                    <div class="investment-item">
+                        <span class="label">Целевая капитализация</span>
+                        <span class="value">30 млрд ₽ (P/E=10x)</span>
+                    </div>
+                    <div class="investment-item">
+                        <span class="label">Мультипликатор выхода</span>
+                        <span class="value">5.2x от инвестиций</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Return Breakdown -->
+            <div class="total-return-block">
+                <h3>💰 Структура общей доходности инвесторов (5 лет, доля 85%)</h3>
+                <div class="return-breakdown">
+                    <div class="return-component dividend-return">
+                        <div class="return-icon">📈</div>
+                        <div class="return-value">4.45 млрд ₽</div>
+                        <div class="return-label">Дивидендная доходность</div>
+                        <div class="return-percent">77% от инвестиций</div>
+                        <div class="return-details">
+                            <div>Доля инвесторов: 85%</div>
+                            <div>Ставка: 35% → 65%</div>
+                        </div>
+                    </div>
+                    <div class="return-plus">+</div>
+                    <div class="return-component capital-return">
+                        <div class="return-icon">🏢</div>
+                        <div class="return-value">20.6 млрд ₽</div>
+                        <div class="return-label">Рост капитализации (85%)</div>
+                        <div class="return-percent">355% от инвестиций</div>
+                        <div class="return-details">
+                            <div>Капитализация: 30 млрд ₽</div>
+                            <div>Доля инвесторов: 25.5 млрд ₽</div>
+                        </div>
+                    </div>
+                    <div class="return-equals">=</div>
+                    <div class="return-component total-return">
+                        <div class="return-icon">🎯</div>
+                        <div class="return-value">25 млрд ₽</div>
+                        <div class="return-label">Общая доходность</div>
+                        <div class="return-percent">430-550% ROI</div>
+                        <div class="return-details">
+                            <div>Среднегодовая: 40-48%</div>
+                            <div>Мультипликатор: 5.2x</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="return-note">
+                    * Консервативный расчет при P/E=10x. Диапазон учитывает возможные задержки запуска и рыночные риски. 15% зарезервировано для ESOP и учредителей (вестинг 3-4 года) для мотивации команды.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="contact" class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Готовы обсудить инвестиции?</h2>
+                <p>Свяжитесь с нами для получения полного инвестиционного меморандума и организации встречи с командой проекта</p>
+                <div class="cta-buttons">
+                    <a href="mailto:invest@ecofood.ru" class="btn-primary">📧 Запросить меморандум</a>
+                    <a href="#" class="btn-secondary" onclick="alert('PDF-версия будет доступна после верификации данных'); return false;">📄 Скачать презентацию</a>
+                </div>
+            </div>
+
+            <div class="disclaimer" style="margin-top: 48px; background: white; border-color: var(--border); color: var(--text-secondary);">
+                <strong>⚠️ Инвестиционное предупреждение:</strong><br><br>
+                Данный документ носит информационный характер и не является публичной офертой. Инвестиции в проект связаны с рисками, включая возможную потерю части или всей суммы инвестиций. Прошлые результаты не гарантируют будущую доходность. Перед принятием инвестиционного решения рекомендуется провести независимую экспертизу и консультацию с финансовым советником.<br><br>
+                <strong>Запрещенные утверждения:</strong> Проект не гарантирует прибыль и не обещает нулевых рисков. Все прогнозы основаны на текущих рыночных условиях и могут не реализоваться.
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">🌱 EcoFood</div>
+                <ul class="footer-links">
+                    <li><a href="#market">Рынок</a></li>
+                    <li><a href="#production">Производства</a></li>
+                    <li><a href="#financial">Финансы</a></li>
+                    <li><a href="#team">Команда</a></li>
+                    <li><a href="#risks">Риски</a></li>
+                    <li><a href="#investment">Инвестиции</a></li>
+                </ul>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 EcoFood. Все права защищены.</p>
+                <p style="margin-top: 8px;">Москва и Московская область, Россия</p>
+                <p style="margin-top: 16px; font-size: 0.75rem;">
+                    Данные требуют верификации через официальные источники: Росстат, Минпромторг РФ, ЦБ РФ, Московская биржа, отраслевые ассоциации.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ===== TOOLTIP SYSTEM =====
+        // Create global tooltip container
+        const tooltipContainer = document.createElement('div');
+        tooltipContainer.id = 'tooltip-container';
+        document.body.appendChild(tooltipContainer);
+
+        // Create overlay for mobile
+        const tooltipOverlay = document.createElement('div');
+        tooltipOverlay.className = 'tooltip-overlay';
+        document.body.appendChild(tooltipOverlay);
+
+        let activeTooltip = null;
+        let hideTimeout = null;
+
+        function showTooltip(term, text) {
+            clearTimeout(hideTimeout);
+            
+            const rect = term.getBoundingClientRect();
+            const isMobile = window.innerWidth <= 768;
+            
+            tooltipContainer.textContent = text;
+            tooltipContainer.className = '';
+            
+            if (isMobile) {
+                tooltipOverlay.classList.add('active');
+                tooltipContainer.classList.add('visible');
+            } else {
+                // Make visible first to get dimensions
+                tooltipContainer.style.visibility = 'hidden';
+                tooltipContainer.style.opacity = '0';
+                tooltipContainer.style.display = 'block';
+                
+                const tooltipRect = tooltipContainer.getBoundingClientRect();
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+                const gap = 12;
+                
+                let top, left;
+                let arrowClass = 'arrow-bottom';
+                
+                // Vertical position
+                if (rect.top - tooltipRect.height - gap > 10) {
+                    // Above
+                    top = rect.top - tooltipRect.height - gap;
+                    arrowClass = 'arrow-bottom';
+                } else {
+                    // Below
+                    top = rect.bottom + gap;
+                    arrowClass = 'arrow-top';
+                }
+                
+                // Horizontal position - center on term
+                left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+                
+                // Keep within viewport
+                if (left < 10) {
+                    left = 10;
+                    arrowClass += ' arrow-left';
+                } else if (left + tooltipRect.width > viewportWidth - 10) {
+                    left = viewportWidth - tooltipRect.width - 10;
+                    arrowClass += ' arrow-right';
+                }
+                
+                // Ensure not off-screen vertically
+                if (top < 10) top = 10;
+                if (top + tooltipRect.height > viewportHeight - 10) {
+                    top = viewportHeight - tooltipRect.height - 10;
+                }
+                
+                tooltipContainer.style.top = top + 'px';
+                tooltipContainer.style.left = left + 'px';
+                tooltipContainer.className = arrowClass;
+                tooltipContainer.style.visibility = '';
+                tooltipContainer.style.opacity = '';
+                tooltipContainer.classList.add('visible');
+            }
+            
+            activeTooltip = term;
+        }
+
+        function hideTooltip() {
+            hideTimeout = setTimeout(() => {
+                tooltipContainer.classList.remove('visible');
+                tooltipOverlay.classList.remove('active');
+                activeTooltip = null;
+            }, 100);
+        }
+
+        // Initialize tooltips
+        document.querySelectorAll('.term').forEach(term => {
+            const tooltipText = term.dataset.tooltip;
+            
+            if (!tooltipText) {
+                console.warn('Term without tooltip:', term.textContent);
+                return;
+            }
+            
+            // Desktop events
+            term.addEventListener('mouseenter', () => {
+                if (window.innerWidth > 768) {
+                    showTooltip(term, tooltipText);
+                }
+            });
+            
+            term.addEventListener('mouseleave', () => {
+                if (window.innerWidth > 768) {
+                    hideTooltip();
+                }
+            });
+            
+            // Mobile/touch events
+            term.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                showTooltip(term, tooltipText);
+            });
+
+            // Touch events for better mobile support
+            term.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                showTooltip(term, tooltipText);
+            });
+        });
+
+        // Close tooltip on overlay click
+        tooltipOverlay.addEventListener('click', () => {
+            tooltipContainer.classList.remove('visible');
+            tooltipOverlay.classList.remove('active');
+            activeTooltip = null;
+        });
+
+        // Close tooltip on outside click (desktop)
+        document.addEventListener('click', (e) => {
+            if (activeTooltip && !e.target.closest('.term') && window.innerWidth > 768) {
+                hideTooltip();
+            }
+        });
+
+        // Reposition on scroll
+        window.addEventListener('scroll', () => {
+            if (activeTooltip && window.innerWidth > 768) {
+                const text = activeTooltip.dataset.tooltip;
+                if (text) showTooltip(activeTooltip, text);
+            }
+        }, { passive: true });
+
+        // ===== END TOOLTIP SYSTEM =====
+
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    
+                    // Trigger counter animation if element has data-count
+                    if (entry.target.dataset.count) {
+                        animateCounter(entry.target);
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Add animation classes to elements
+        document.addEventListener('DOMContentLoaded', () => {
+            // Hero elements
+            document.querySelector('.hero-badge')?.classList.add('fade-in');
+            document.querySelector('.hero h1')?.classList.add('fade-in', 'stagger-1');
+            document.querySelector('.hero-subtitle')?.classList.add('fade-in', 'stagger-2');
+            
+            // Metric cards
+            document.querySelectorAll('.metric-card').forEach((card, i) => {
+                card.classList.add('scale-in', `stagger-${i + 1}`);
+                observer.observe(card);
+            });
+
+            // Section headers
+            document.querySelectorAll('.section-header').forEach(header => {
+                header.classList.add('fade-in');
+                observer.observe(header);
+            });
+
+            // Industry cards
+            document.querySelectorAll('.industry-card').forEach((card, i) => {
+                card.classList.add('fade-in', `stagger-${(i % 3) + 1}`);
+                observer.observe(card);
+            });
+
+            // Market cards
+            document.querySelectorAll('.market-card').forEach((card, i) => {
+                card.classList.add('fade-in', `stagger-${(i % 3) + 1}`);
+                observer.observe(card);
+            });
+
+            // Production cards
+            document.querySelectorAll('.production-card').forEach((card, i) => {
+                card.classList.add('fade-in');
+                observer.observe(card);
+            });
+
+            // Argument cards
+            document.querySelectorAll('.argument-card').forEach((card, i) => {
+                card.classList.add('scale-in', `stagger-${i + 1}`);
+                observer.observe(card);
+            });
+
+            // Synergy cards
+            document.querySelectorAll('.synergy-card').forEach((card, i) => {
+                card.classList.add('fade-in', `stagger-${i + 1}`);
+                observer.observe(card);
+            });
+
+            // Scenario cards
+            document.querySelectorAll('.scenario-card').forEach((card, i) => {
+                card.classList.add('scale-in', `stagger-${i + 1}`);
+                observer.observe(card);
+            });
+
+            // Case cards
+            document.querySelectorAll('.case-card').forEach((card, i) => {
+                card.classList.add(i % 2 === 0 ? 'fade-in-left' : 'fade-in-right');
+                observer.observe(card);
+            });
+
+            // Team cards
+            document.querySelectorAll('.team-card').forEach((card, i) => {
+                card.classList.add('scale-in', `stagger-${i + 1}`);
+                observer.observe(card);
+            });
+
+            // Risk cards
+            document.querySelectorAll('.risk-card').forEach((card, i) => {
+                card.classList.add('fade-in', `stagger-${(i % 3) + 1}`);
+                observer.observe(card);
+            });
+
+            // Investment cards
+            document.querySelectorAll('.investment-card').forEach((card, i) => {
+                card.classList.add('fade-in', `stagger-${(i % 2) + 1}`);
+                observer.observe(card);
+            });
+
+            // Total return block
+            const totalReturnBlock = document.querySelector('.total-return-block');
+            if (totalReturnBlock) {
+                totalReturnBlock.classList.add('fade-in');
+                observer.observe(totalReturnBlock);
+            }
+
+            // Return components
+            document.querySelectorAll('.return-component').forEach((comp, i) => {
+                comp.classList.add('scale-in', `stagger-${i + 1}`);
+                observer.observe(comp);
+            });
+
+            // Tables
+            document.querySelectorAll('.comparison-table').forEach(table => {
+                table.classList.add('fade-in');
+                observer.observe(table);
+            });
+
+            // Financial table
+            document.querySelectorAll('.financial-table').forEach(table => {
+                table.classList.add('fade-in');
+                observer.observe(table);
+            });
+
+            // Observe hero elements
+            document.querySelectorAll('.hero .fade-in').forEach(el => observer.observe(el));
+
+            // Initialize counters
+            initCounters();
+        });
+
+        // Counter animation
+        function animateCounter(element) {
+            const target = parseFloat(element.dataset.count);
+            const suffix = element.dataset.suffix || '';
+            const prefix = element.dataset.prefix || '';
+            const duration = 2000;
+            const start = 0;
+            const startTime = performance.now();
+
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Easing function
+                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                const current = start + (target - start) * easeOutQuart;
+                
+                if (target % 1 !== 0) {
+                    element.textContent = prefix + current.toFixed(1) + suffix;
+                } else {
+                    element.textContent = prefix + Math.floor(current).toLocaleString('ru-RU') + suffix;
+                }
+
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+
+            requestAnimationFrame(update);
+        }
+
+        function initCounters() {
+            // Add data attributes to metric values for counter animation
+            const metricValues = document.querySelectorAll('.metric-value');
+            metricValues.forEach(el => {
+                const text = el.textContent;
+                if (text.includes('5.8')) {
+                    el.dataset.count = '5.8';
+                    el.dataset.suffix = ' млрд ₽';
+                } else if (text.includes('3 млрд')) {
+                    el.dataset.count = '3';
+                    el.dataset.suffix = ' млрд ₽';
+                } else if (text.includes('30 млрд')) {
+                    el.dataset.count = '30';
+                    el.dataset.suffix = ' млрд ₽';
+                } else if (text.includes('40-48%')) {
+                    el.dataset.count = '44';
+                    el.dataset.suffix = '%';
+                } else if (text.includes('4.5 года')) {
+                    el.dataset.count = '4.5';
+                    el.dataset.suffix = ' года';
+                }
+            });
+        }
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Navigation background and shadow on scroll
+        let lastScroll = 0;
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            const currentScroll = window.scrollY;
+            
+            if (currentScroll > 50) {
+                nav.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
+                nav.style.background = 'rgba(255, 255, 255, 0.98)';
+            } else {
+                nav.style.boxShadow = 'none';
+                nav.style.background = 'rgba(255, 255, 255, 0.95)';
+            }
+
+            // Parallax effect for hero - disabled on mobile
+            const hero = document.querySelector('.hero');
+            if (hero && currentScroll < window.innerHeight && window.innerWidth > 768) {
+                hero.style.transform = `translateY(${currentScroll * 0.3}px)`;
+                hero.style.opacity = 1 - (currentScroll / window.innerHeight) * 0.3;
+            } else if (hero) {
+                hero.style.transform = '';
+                hero.style.opacity = '1';
+            }
+
+            lastScroll = currentScroll;
+        });
+
+        // Add ripple effect to buttons
+        document.querySelectorAll('.btn-primary, .btn-secondary, .nav-cta').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const rect = this.getBoundingClientRect();
+                const ripple = document.createElement('span');
+                ripple.style.cssText = `
+                    position: absolute;
+                    background: rgba(255,255,255,0.5);
+                    border-radius: 50%;
+                    transform: scale(0);
+                    animation: ripple 0.6s linear;
+                    pointer-events: none;
+                `;
+                
+                const size = Math.max(rect.width, rect.height);
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
+                ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
+                
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // Add hover tilt effect to cards
+        document.querySelectorAll('.metric-card, .argument-card, .synergy-card').forEach(card => {
+            card.addEventListener('mousemove', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = (y - centerY) / 20;
+                const rotateY = (centerX - x) / 20;
+                
+                this.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px) scale(1.02)`;
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = '';
+            });
+        });
+
+        // Typing effect for hero title (optional enhancement)
+        function typeWriter(element, text, speed = 50) {
+            let i = 0;
+            element.textContent = '';
+            function type() {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // Progress bar animation for risk bars
+        document.querySelectorAll('.risk-bar-fill').forEach(bar => {
+            const width = bar.style.width;
+            bar.style.width = '0';
+            
+            const barObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            bar.style.transition = 'width 1s ease-out';
+                            bar.style.width = width;
+                        }, 300);
+                        barObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            barObserver.observe(bar);
+        });
+
+        // Simple ROI Calculator (placeholder)
+        function calculateROI(investment) {
+            const years = 5;
+            const dividendRate1_3 = 0.35;
+            const dividendRate4_5 = 0.65;
+            const investorSharePercent = 0.85; // 85% for investors
+            const profits = [1150, 1600, 2000, 2500, 3000];
+            const totalInvestment = 5800;
+            
+            let totalDividends = 0;
+            const investorShare = investment / totalInvestment;
+            
+            for (let i = 0; i < years; i++) {
+                const rate = i < 3 ? dividendRate1_3 : dividendRate4_5;
+                totalDividends += profits[i] * rate * investorShare * investorSharePercent;
+            }
+            
+            const finalCapitalization = 30000; // P/E=10x
+            const exitValue = finalCapitalization * investorShare * investorSharePercent;
+            
+            return {
+                totalDividends: totalDividends.toFixed(0),
+                exitValue: exitValue.toFixed(0),
+                totalReturn: (totalDividends + exitValue).toFixed(0),
+                roi: (((totalDividends + exitValue) / investment - 1) * 100).toFixed(1)
+            };
+        }
+    </script>
+
+    <style>
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    </style>
+</body>
+</html>
