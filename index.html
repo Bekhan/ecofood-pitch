@@ -1492,6 +1492,7 @@
 
         .financial-table td {
             font-size: 0.95rem;
+            white-space: nowrap;
         }
 
         .financial-table tr:hover {
@@ -1873,6 +1874,7 @@
             padding: 16px 14px;
             text-align: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            white-space: nowrap;
         }
 
         .investor-table th {
@@ -2040,6 +2042,7 @@
             .investor-table th,
             .investor-table td {
                 padding: 10px 6px;
+                white-space: nowrap;
             }
             .investor-table th:first-child,
             .investor-table td:first-child {
@@ -2068,6 +2071,7 @@
             .investor-table td {
                 padding: 8px 4px;
                 font-size: 0.7rem;
+                white-space: nowrap;
             }
             .investor-table .highlight-cell {
                 font-size: 0.8rem;
@@ -2373,6 +2377,7 @@
             .comparison-table th,
             .comparison-table td {
                 padding: 10px 8px;
+                white-space: nowrap;
             }
             .section-header h2 {
                 font-size: 1.5rem;
@@ -2391,6 +2396,18 @@
             }
             .hero {
                 padding: 120px 0 60px;
+            }
+            /* Financial table mobile */
+            .financial-table th,
+            .financial-table td {
+                padding: 10px 6px;
+                font-size: 0.75rem;
+                white-space: nowrap;
+            }
+            .financial-table th:first-child,
+            .financial-table td:first-child {
+                white-space: normal;
+                min-width: 80px;
             }
             /* Fix text wrapping */
             .investment-card h3 {
