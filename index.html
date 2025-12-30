@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoFood — Инвестиционный проект</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -339,6 +340,116 @@
             width: 300px;
             height: 300px;
         }
+
+        /* Burger Menu */
+        .burger-menu {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .burger-menu span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .burger-menu.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .burger-menu.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .burger-menu.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* Mobile Menu Overlay */
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .mobile-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: -280px;
+            width: 280px;
+            height: 100vh;
+            background: white;
+            z-index: 999;
+            padding: 80px 24px 32px;
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .mobile-menu li {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 16px 0;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 1rem;
+            transition: color 0.2s ease;
+        }
+
+        .mobile-menu a:hover {
+            color: var(--primary);
+        }
+
+        .mobile-menu .mobile-cta {
+            display: block;
+            margin-top: 24px;
+            background: var(--primary);
+            color: white;
+            padding: 14px 24px;
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
 
         .nav-cta:hover {
             background: var(--primary-light);
@@ -1698,6 +1809,151 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        /* Investor Calculator Table */
+        .investor-calculator {
+            margin-top: 48px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .investor-calculator h3 {
+            text-align: center;
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+            opacity: 0.95;
+        }
+
+        .investor-calculator .calc-subtitle {
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-bottom: 32px;
+        }
+
+        .investor-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .investor-table th,
+        .investor-table td {
+            padding: 16px 14px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .investor-table th {
+            background: rgba(255, 255, 255, 0.1);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.9;
+        }
+
+        .investor-table th:first-child {
+            text-align: left;
+            padding-left: 20px;
+        }
+
+        .investor-table td:first-child {
+            text-align: left;
+            padding-left: 20px;
+            font-weight: 500;
+        }
+
+        .investor-table tbody tr {
+            transition: background 0.3s ease;
+        }
+
+        .investor-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .investor-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .investor-table .year-cell {
+            font-size: 0.9rem;
+            opacity: 0.85;
+        }
+
+        .investor-table .total-row {
+            background: rgba(76, 175, 80, 0.15);
+            font-weight: 600;
+        }
+
+        .investor-table .total-row td {
+            border-top: 2px solid rgba(76, 175, 80, 0.4);
+            padding-top: 18px;
+            padding-bottom: 18px;
+        }
+
+        .investor-table .highlight-cell {
+            color: #4caf50;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .investor-table .capital-row {
+            background: rgba(33, 150, 243, 0.1);
+        }
+
+        .investor-table .final-row {
+            background: linear-gradient(90deg, rgba(255, 193, 7, 0.15), rgba(255, 193, 7, 0.08));
+        }
+
+        .investor-table .final-row td {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #ffc107;
+        }
+
+        .investor-table .roi-badge {
+            display: inline-block;
+            background: rgba(76, 175, 80, 0.3);
+            color: #81c784;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .calc-note {
+            margin-top: 24px;
+            text-align: center;
+            font-size: 0.8rem;
+            opacity: 0.6;
+            font-style: italic;
+        }
+
+        /* Investment amount headers */
+        .amount-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .amount-header .amount {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .amount-header .share {
+            font-size: 0.7rem;
+            opacity: 0.6;
+            font-weight: 400;
+        }
+
         @media (max-width: 1024px) {
             .return-breakdown {
                 gap: 16px;
@@ -1708,6 +1964,14 @@
             }
             .return-value {
                 font-size: 1.5rem;
+            }
+            .investor-calculator {
+                padding: 28px 20px;
+            }
+            .investor-table th,
+            .investor-table td {
+                padding: 12px 10px;
+                font-size: 0.85rem;
             }
         }
 
@@ -1729,6 +1993,60 @@
             }
             .total-return-block h3 {
                 font-size: 1.1rem;
+            }
+            .investor-calculator {
+                padding: 20px 12px;
+                margin-top: 32px;
+                border-radius: 16px;
+            }
+            .investor-calculator h3 {
+                font-size: 1rem;
+                line-height: 1.4;
+            }
+            .investor-calculator .calc-subtitle {
+                font-size: 0.8rem;
+                margin-bottom: 20px;
+            }
+            .investor-table {
+                font-size: 0.75rem;
+            }
+            .investor-table th,
+            .investor-table td {
+                padding: 10px 6px;
+            }
+            .investor-table th:first-child,
+            .investor-table td:first-child {
+                padding-left: 10px;
+            }
+            .investor-table .highlight-cell {
+                font-size: 0.9rem;
+            }
+            .investor-table .final-row td {
+                font-size: 0.85rem;
+            }
+            .amount-header .amount {
+                font-size: 0.85rem;
+            }
+            .amount-header .share {
+                font-size: 0.6rem;
+            }
+            .investor-table .roi-badge {
+                font-size: 0.65rem;
+                padding: 3px 6px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .investor-table th,
+            .investor-table td {
+                padding: 8px 4px;
+                font-size: 0.7rem;
+            }
+            .investor-table .highlight-cell {
+                font-size: 0.8rem;
+            }
+            .amount-header .amount {
+                font-size: 0.75rem;
             }
         }
 
@@ -1912,6 +2230,18 @@
             .nav-links {
                 display: none;
             }
+            .nav-cta {
+                display: none;
+            }
+            .burger-menu {
+                display: flex;
+            }
+            .mobile-menu-overlay {
+                display: block;
+            }
+            .mobile-menu {
+                display: block;
+            }
             .hero h1 {
                 font-size: 1.75rem;
                 line-height: 1.3;
@@ -2061,9 +2391,31 @@
                 <li><a href="#risks">Риски</a></li>
                 <li><a href="#investment">Инвестиции</a></li>
             </ul>
-            <a href="#contact" class="nav-cta">Связаться</a>
+            <a href="tel:+79332140120" class="nav-cta">Связаться</a>
+            <div class="burger-menu" id="burger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
         </div>
     </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobile-overlay"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <ul>
+            <li><a href="#strategy">Стратегия</a></li>
+            <li><a href="#comparison">Сравнение</a></li>
+            <li><a href="#market">Рынок</a></li>
+            <li><a href="#production">Производства</a></li>
+            <li><a href="#financial">Финансы</a></li>
+            <li><a href="#risks">Риски</a></li>
+            <li><a href="#investment">Инвестиции</a></li>
+        </ul>
+        <a href="tel:+79332140120" class="mobile-cta">📞 Связаться</a>
+    </div>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -3211,6 +3563,100 @@
                     * Консервативный расчет при P/E=10x. Диапазон учитывает возможные задержки запуска и рыночные риски. 15% зарезервировано для ESOP и учредителей (вестинг 3-4 года) для мотивации команды.
                 </div>
             </div>
+
+            <!-- Investor Calculator Table -->
+            <div class="investor-calculator">
+                <h3>📊 Расчёт доходности для инвесторов (2027-2031)</h3>
+                <p class="calc-subtitle">Дивиденды + рост капитала при вложениях 1, 5 и 10 млн ₽</p>
+                
+                <div class="table-wrapper">
+                    <table class="investor-table">
+                        <thead>
+                            <tr>
+                                <th>Показатель</th>
+                                <th>
+                                    <div class="amount-header">
+                                        <span class="amount">1 млн ₽</span>
+                                        <span class="share">доля 0.017%</span>
+                                    </div>
+                                </th>
+                                <th>
+                                    <div class="amount-header">
+                                        <span class="amount">5 млн ₽</span>
+                                        <span class="share">доля 0.086%</span>
+                                    </div>
+                                </th>
+                                <th>
+                                    <div class="amount-header">
+                                        <span class="amount">10 млн ₽</span>
+                                        <span class="share">доля 0.172%</span>
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Дивиденды 2027</td>
+                                <td class="year-cell">59 тыс. ₽</td>
+                                <td class="year-cell">293 тыс. ₽</td>
+                                <td class="year-cell">586 тыс. ₽</td>
+                            </tr>
+                            <tr>
+                                <td>Дивиденды 2028</td>
+                                <td class="year-cell">82 тыс. ₽</td>
+                                <td class="year-cell">409 тыс. ₽</td>
+                                <td class="year-cell">819 тыс. ₽</td>
+                            </tr>
+                            <tr>
+                                <td>Дивиденды 2029</td>
+                                <td class="year-cell">102 тыс. ₽</td>
+                                <td class="year-cell">512 тыс. ₽</td>
+                                <td class="year-cell">1.02 млн ₽</td>
+                            </tr>
+                            <tr>
+                                <td>Дивиденды 2030</td>
+                                <td class="year-cell">238 тыс. ₽</td>
+                                <td class="year-cell">1.19 млн ₽</td>
+                                <td class="year-cell">2.38 млн ₽</td>
+                            </tr>
+                            <tr>
+                                <td>Дивиденды 2031</td>
+                                <td class="year-cell">286 тыс. ₽</td>
+                                <td class="year-cell">1.43 млн ₽</td>
+                                <td class="year-cell">2.86 млн ₽</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td>Всего дивидендов</td>
+                                <td class="highlight-cell">767 тыс. ₽</td>
+                                <td class="highlight-cell">3.83 млн ₽</td>
+                                <td class="highlight-cell">7.67 млн ₽</td>
+                            </tr>
+                            <tr class="capital-row">
+                                <td>Стоимость доли (2031)</td>
+                                <td>4.4 млн ₽</td>
+                                <td>22 млн ₽</td>
+                                <td>44 млн ₽</td>
+                            </tr>
+                            <tr class="final-row">
+                                <td>Общий доход</td>
+                                <td>5.17 млн ₽</td>
+                                <td>25.8 млн ₽</td>
+                                <td>51.7 млн ₽</td>
+                            </tr>
+                            <tr>
+                                <td>ROI за 5 лет</td>
+                                <td><span class="roi-badge">+417%</span></td>
+                                <td><span class="roi-badge">+416%</span></td>
+                                <td><span class="roi-badge">+417%</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <p class="calc-note">
+                    * Расчёт: доля = инвестиция / 5.8 млрд × 85%. Дивиденды = чистая прибыль × ставка × доля. Стоимость доли = капитализация 30 млрд × доля.
+                </p>
+            </div>
         </div>
     </section>
 
@@ -3221,8 +3667,8 @@
                 <h2>Готовы обсудить инвестиции?</h2>
                 <p>Свяжитесь с нами для получения полного инвестиционного меморандума и организации встречи с командой проекта</p>
                 <div class="cta-buttons">
-                    <a href="mailto:invest@ecofood.ru" class="btn-primary">📧 Запросить меморандум</a>
-                    <a href="#" class="btn-secondary" onclick="alert('PDF-версия будет доступна после верификации данных'); return false;">📄 Скачать презентацию</a>
+                    <a href="mailto:bekhan988@mail.ru" class="btn-primary">📧 Запросить меморандум</a>
+                    <a href="tel:+79332140120" class="btn-secondary">📞 +7 999 214-01-20</a>
                 </div>
             </div>
 
@@ -3407,6 +3853,41 @@
         }, { passive: true });
 
         // ===== END TOOLTIP SYSTEM =====
+
+        // ===== BURGER MENU =====
+        const burgerMenu = document.getElementById('burger-menu');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileOverlay = document.getElementById('mobile-overlay');
+
+        function toggleMobileMenu() {
+            burgerMenu.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+            mobileOverlay.classList.toggle('active');
+            document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+        }
+
+        function closeMobileMenu() {
+            burgerMenu.classList.remove('active');
+            mobileMenu.classList.remove('active');
+            mobileOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        burgerMenu.addEventListener('click', toggleMobileMenu);
+        mobileOverlay.addEventListener('click', closeMobileMenu);
+
+        // Close menu on link click
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', closeMobileMenu);
+        });
+
+        // Close menu on resize to desktop
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                closeMobileMenu();
+            }
+        });
+        // ===== END BURGER MENU =====
 
         // Intersection Observer for scroll animations
         const observerOptions = {
